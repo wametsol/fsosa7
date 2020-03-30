@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Switch, Route, Link, useParams, useHistory
 } from "react-router-dom"
+import { useField } from './hooks'
 
 const Menu = ({addNew, anecdotes, notification}) => {
   const padding = {
@@ -45,7 +46,6 @@ const Notify = ( {message} ) => {
 const Anecdote = ({ anecdotes }) => {
   const id = useParams().id
   const anecdote = anecdotes.find(a => a.id === id)
-  console.log(anecdote)
   return (
     <div>
       <h2>{anecdote.content} by {anecdote.author} </h2>
@@ -87,40 +87,49 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
   const history = useHistory()
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
 
+  const fixStuff = ({ clear, ...rest }) => rest
+
+  const fixedContent = fixStuff(content)
+  const fixedAuthor = fixStuff(author)
+  const fixedInfo = fixStuff(info)
+  const clearForm = () => {
+    content.clear()
+    author.clear()
+    info.clear()
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info:info.value,
       votes: 0
     })
     history.push('/')
   }
-
-  return (
+    return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...fixedContent} /> 
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...fixedAuthor} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...fixedInfo} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button><button type="reset" onClick={() => clearForm()}>reset</button> 
       </form>
     </div>
   )
