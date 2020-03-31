@@ -18,12 +18,14 @@ blogsRouter.use(bodyParser.json())
   blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
     .populate('user')
+
     response.json(blogs.map(formatBlog))
     
 })
   blogsRouter.get('/api/blogs', async (request, response) => {
     const blogs = await Blog.find({})
     .populate('user')
+
     response.json(blogs)
   })
   
@@ -44,14 +46,8 @@ blogsRouter.use(bodyParser.json())
       author: body.author,
       url: body.url,
       likes: body.likes === undefined ? 0 : body.likes,
-      user: {
-        _id: useR[1]._id,
-        username: useR[1].username,
-        name: useR[1].name
-      }
+      user:  useR[1]._id
     })
-   
-    
     const savedBlog = await blog.save()
     res.json(formatBlog(savedBlog))
   }catch (exception) {
@@ -82,7 +78,8 @@ blogsRouter.use(bodyParser.json())
   })
   blogsRouter.delete('/api/blogs/:id', async (request, response) => {
     try{
-      await Blog.findByIdAndRemove(request.params.id)
+      const deletedBlog = await Blog.findByIdAndRemove(request.params.id)
+      response.json(formatBlog(deletedBlog))
     }
     catch (exception) {
       console.log(exception)
