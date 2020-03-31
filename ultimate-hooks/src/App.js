@@ -39,7 +39,6 @@ const useResource = (baseUrl) => {
       .then(response => {
         setResources(resources.concat(response.data))
       })
-      //setResources(resources.concat(resource))
     } catch (exception){
       console.log(exception)
     }
