@@ -9,14 +9,13 @@ const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const config = require('./utils/config')
 
-
-
-app.use('/api/blogs', blogsRouter)
-app.use('/', blogsRouter)
-app.use('/api/users', usersRouter)
-app.use('/api/login', loginRouter)
 app.use(cors())
 app.use(bodyParser.json())
+app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
+
+
 
 mongoose
   .connect(config.mongoUrl)

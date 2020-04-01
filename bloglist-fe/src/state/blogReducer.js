@@ -1,32 +1,24 @@
-const initialState = {
-    blogs: []
-}
+import blogService from '../services/blogs'
 
-export const blogReducer = (state = initialState, action) => {
+const initialState = []
+
+
+const blogReducer = (state = initialState, action) => {
 
     switch(action.type){
         case 'SET_BLOGS':
-            return {
-                ...state,
-                blogs: action.payload
-              }
+            return action.payload
         case 'NEW_BLOG':
-            return {
-                ...state,
-                blogs: state.blogs.concat(action.payload)
-            }
+            return state.concat(action.payload)
         case 'LIKE_BLOG':
-            return {
-                ...state,
-                blogs: state.blogs.map(blog =>
+            return  state.map(blog =>
                     blog.id !== action.payload.id ? blog : action.payload)
-            }
+        case 'COMMENT_BLOG':
+            return  state.map(blog =>
+                    blog.id !== action.payload.id ? blog : action.payload)        
         case 'DELETE_BLOG':
-            return {
-                ...state,
-                blogs: state.blogs.filter(b => 
+            return state.filter(b => 
                     b.id !== action.payload.id)
-            }
         default:
             return state
     }
@@ -34,11 +26,18 @@ export const blogReducer = (state = initialState, action) => {
 }
 
 
-export const setInitialBlogs = (content) => {
-    return {
-      type: "SET_BLOGS",
-      payload: content
+
+
+export const setInitialBlogs =  () => {
+
+    return async dispatch => {
+        const blogs = await blogService.getAll()
+        dispatch({
+            type: "SET_BLOGS",
+            payload: blogs
+        })
      }
+    
   }
 export const createBlogg = (blogdata) => {
     return {
@@ -48,9 +47,21 @@ export const createBlogg = (blogdata) => {
 }
 
 export const likeBlog = (likedBlog) => {
-    return {
-        type: "LIKE_BLOG",
-        payload: likedBlog
+    return async dispatch => {
+        dispatch({
+            type: "LIKE_BLOG",
+            payload: likedBlog
+        })
+        
+    }
+}
+export const commentBlog = (commentedBlog) => {
+    return async dispatch => {
+        dispatch({
+            type: "COMMENT_BLOG",
+            payload: commentedBlog
+        })
+        
     }
 }
 export const deleteBlog = (blog) => {
@@ -59,3 +70,5 @@ export const deleteBlog = (blog) => {
         payload: blog
     }
 }
+
+export default blogReducer

@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import userService from './services/user'
 import Notification from './components/Notification'
+import Blogs from './components/Blogs'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
@@ -15,7 +16,7 @@ import PropTypes from 'prop-types'
 import { createStore } from 'redux'
 import { useSelector, useDispatch } from 'react-redux'
 import {  setSuccess, setError } from './state/notificationReducer'
-import { setInitialBlogs, createBlogg, likeBlog, deleteBlog } from './state/blogReducer'
+import { setInitialBlogs, createBlogg, likeBlog, commentBlog, deleteBlog } from './state/blogReducer'
 import { setLoggedUser, userLogout, setUserList } from './state/userReducer'
 
 
@@ -24,36 +25,32 @@ import { setLoggedUser, userLogout, setUserList } from './state/userReducer'
 
 
 const App = () => {
-  //const [error, setError] = useState(null)
-  //const [success, setSuccess] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  //const [user, setUser] = useState(null)
+  const [postcomment, setComment] = useState('')
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const blogFromRef = React.createRef()
-  //const notificationStore = createStore(notificationReducer)
   const dispatch = useDispatch()
-  const notifications = useSelector(state => state.notificationReducer)
-  const blogger = useSelector(state => state.blogReducer)
-  const users = useSelector(state => state.userReducer)
+  const notifications = useSelector(state => state.notifications)
+  const blogs = useSelector(state => state.blogs)
+  const users = useSelector(state => state.users)
+
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      dispatch(setInitialBlogs(blogs))
-    )  
-  }, [])
+      dispatch(setInitialBlogs())
+  }, [dispatch])
 
   useEffect(() => {
-    userService.getAll().then(users =>
-      dispatch(setUserList(users))
-    )  
-  }, [])
-  const blogs = blogger.blogs
+      dispatch(setUserList())  
+  }, [dispatch])
+
+
+  
+  
   const user = users.user
   const userlist = users.userlist
-
   const usermatch = useRouteMatch('/users/:id')
   const chosenUser = usermatch
     ? userlist.find(user => user._id === usermatch.params.id)
@@ -63,10 +60,12 @@ const App = () => {
   const chosenBlog = blogmatch
     ? blogs.find(blog => blog.id === blogmatch.params.id)
     : null
+
+    
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
-    if (loggedUserJSON){
-      const localuser = JSON.parse(loggedUserJSON)
+    const loggedUserJson = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJson){
+      const localuser = JSON.parse(loggedUserJson)
       dispatch(setLoggedUser(localuser))
       blogService.setToken(localuser.token)
     } 
@@ -110,7 +109,7 @@ const App = () => {
 
   const handleLogOut = (event) => {
     
-    //window.localStorage.removeItem('loggedBlogUser')
+    window.localStorage.removeItem('loggedBlogUser')
     dispatch(userLogout())
     dispatch(setSuccess('logout succesfull'))
     setTimeout(() => {
@@ -132,6 +131,9 @@ const App = () => {
       author: author,
       url: url
     }
+    setTitle('')
+    setAuthor('')
+    setUrl('')
     
     blogService.create(blogObject)
     .then(newBlog => {
@@ -142,6 +144,7 @@ const App = () => {
         dispatch(setSuccess(null))
       }, 5000);
     })
+    
   }
 }
 
@@ -234,6 +237,18 @@ const singleBlog = (blog) => {
     <li>{blog.likes}<button  value={blog.id} onClick={handleLike}>like</button></li>
     <li>added by {blog.user.name}</li>
     {deleButton(blog)}
+    <h3>comments</h3>
+    <form>
+      <div>
+    <input type="text" name="comment" value={postcomment}  onChange={({target}) => setComment(target.value)}></input><button value={blog.id} onClick={handleComment} type="submit">add comment</button>
+    
+    </div>
+    </form>
+    <ul>
+    {blog.comments.map(comment =>
+    <li key={comment+Math.random()}>{comment}</li>
+    )}
+    </ul>
     </div>
   )
 
@@ -292,18 +307,33 @@ const userList = () => {
 const handleLike = (event) => {
   event.preventDefault()
  
-  const likedBlog = blogger.blogs.find(blog => blog.id === event.target.value) 
+  const likedBlog = blogs.find(blog => blog.id === event.target.value) 
   likedBlog.likes = likedBlog.likes + 1
   blogService.update(likedBlog.id, likedBlog)
   .then(newBlog => {
     dispatch(likeBlog(newBlog))
    })
    dispatch(setSuccess(`you liked '${likedBlog.title}' by ${likedBlog.author} `))
-     
    setTimeout(() => {
     dispatch(setSuccess(null))
    }, 2000);
 
+}
+
+const handleComment = (event) => {
+    event.preventDefault()
+    const blogComment = {postcomment}
+    blogService.comment(event.target.value, blogComment)
+    .then(commentedBlog => {
+      dispatch(commentBlog(commentedBlog))
+      setComment('')
+      dispatch(setSuccess(`you commented blog '${commentedBlog.title}`))
+      })
+    setTimeout(() => {
+      dispatch(setSuccess(null))
+    }, 2000);
+    
+  
 }
 
 
@@ -327,13 +357,13 @@ const handleLike = (event) => {
               {singleUser(chosenUser)}
             </Route>
             <Route path="/users">
-              {userList()}
+              {userList}
             </Route>
             <Route path="/blogs/:id">
-            {singleBlog(chosenBlog)}
+              {singleBlog(chosenBlog)}
             </Route>
             <Route path="/">
-              {blogForm()}
+              {blogForm}
             </Route>
           </Switch>
         </div>

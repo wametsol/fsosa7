@@ -3,7 +3,7 @@ const initialState = {
     error: null
 }
 
-export const notificationReducer = (state = initialState, action) => {
+const notificationReducer = (state = initialState, action) => {
     switch (action.type) {
         case 'SET_SUCCESS':
             state.success = action.payload
@@ -40,3 +40,5 @@ export const clearNotification = () => {
         type: "CLEAR"
     }
 }
+
+export default notificationReducer

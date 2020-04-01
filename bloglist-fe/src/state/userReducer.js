@@ -1,11 +1,11 @@
-
+import userService from '../services/user'
 
 const initialState = {
     user: null,
     userlist:[]
 }
 
-export const userReducer = (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
     switch(action.type){
         case 'SET_USER':
             state.user = action.payload
@@ -38,9 +38,15 @@ export const userLogout = () => {
     }
 }
 
-export const setUserList = (users) => {
-    return {
-        type: "SET_USER_LIST",
-        payload: users
-    }
+export const setUserList = () => {
+    return async dispatch => {
+        const users = await userService.getAll()
+        dispatch({
+            type: "SET_USER_LIST",
+            payload: users
+        })
+     }
 }
+
+export default userReducer
+

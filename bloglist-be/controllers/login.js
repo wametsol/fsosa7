@@ -4,6 +4,9 @@ const loginRouter = require('express').Router()
 const User = require('../models/user')
 
 loginRouter.post('/', async (request, response) => {
+
+  try {
+    console.log(request.body)
   const body = request.body
 
   const user = await User.findOne({ username: body.username })
@@ -27,6 +30,13 @@ loginRouter.post('/', async (request, response) => {
   response
     .status(200)
     .send({ token, username: user.username, name: user.name })
+  } catch (error) {
+    console.log(error)
+    return response.status(500).json({
+      error: 'something went wrong'
+    })
+  }
+  
 })
 
 module.exports = loginRouter
