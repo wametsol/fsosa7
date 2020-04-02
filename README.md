@@ -1,5 +1,5 @@
 # Fullstack 20 - osa7
-Pohjaksi otettu 2018 toteutettu osa 5 ja osa 4, joita muokattu ja korjattu tarpeen mukaan.
+Bloglist tehtävien pohjaksi otettu vuonna 2018 toteutettu osa 4 ja 5, joita muokattu ja korjattu tarpeen mukaan.
 Kansiot on pyritty nimeämään tehtävien mukaan. 
 
 + 7.1-7.6 -> routed-anecdotes
