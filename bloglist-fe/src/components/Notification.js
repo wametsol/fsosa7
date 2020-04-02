@@ -1,22 +1,23 @@
 import React from 'react'
 import './component.css'
+import { Alert } from '@material-ui/lab'
 
 const Notification = ({ message, isError }) => {
   if (message === null) {
     return null
   }
-  if(isError){
+  if (isError) {
     return (
-        <div className="Error">
-          {message}
-        </div>
-      )
+      <Alert severity="error">
+        {message}
+      </Alert>
+    )
   }
 
   return (
-    <div className="Success">
+    <Alert severity="success">
       {message}
-    </div>
+    </Alert>
   )
 }
 

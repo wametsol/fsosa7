@@ -12,8 +12,8 @@ const notificationReducer = (state = initialState, action) => {
             state.error = action.payload
             return state
         case 'CLEAR':
-            state.success=null
-            state.error=null
+            state.success = null
+            state.error = null
             return state
         default:
             return state
@@ -23,21 +23,21 @@ const notificationReducer = (state = initialState, action) => {
 
 export const setSuccess = (message) => {
     return {
-        type: "SET_SUCCESS",
+        type: 'SET_SUCCESS',
         payload: message
-       }
+    }
 }
 
 export const setError = (message) => {
     return {
-        type: "SET_ERROR",
+        type: 'SET_ERROR',
         payload: message
-       }
+    }
 }
 
 export const clearNotification = () => {
     return {
-        type: "CLEAR"
+        type: 'CLEAR'
     }
 }
 

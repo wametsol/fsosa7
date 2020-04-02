@@ -44,7 +44,7 @@ blogsRouter.post('/:id/comments', async (request, response) => {
         title: blog.title,
         author: blog.author,
         url: blog.url,
-        comments: blog.comments.concat(body.postcomment),
+        comments: blog.comments.concat(body.comment),
         likes: blog.likes,
         user: blog.user 
     }
@@ -69,8 +69,6 @@ blogsRouter.post('/:id/comments', async (request, response) => {
       }
       const user = await User.findById(decodedToken.id)
       
-
-    console.log(user)
     
     if (body.title === undefined || body.url === undefined){
       return res.status(400).json({error: 'title or url missing'})

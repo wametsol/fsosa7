@@ -15,7 +15,7 @@ const create = async (newObject) => {
   const config = {
     headers: { 'Authorization': token }
   }
-
+  console.log(newObject)
   const response = await axios.post(baseUrl, newObject, config)
   return response.data
 }
@@ -26,11 +26,11 @@ const update = (id, newObject) => {
 }
 
 const comment = async (id, comment) => {
-  const response = await axios.post(`${baseUrl}/${id}/comments`, comment)
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment })
   return response.data
 }
 
-const destroy =  (id) => {
+const destroy = (id) => {
   const config = {
     headers: { 'Authorization': token }
   }
@@ -38,4 +38,4 @@ const destroy =  (id) => {
   return req.then(response => response.data)
 }
 
-export default { getAll, create, update, setToken, destroy, comment}
+export default { getAll, create, update, setToken, destroy, comment }
