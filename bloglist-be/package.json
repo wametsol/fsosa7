@@ -21,7 +21,7 @@
     "cors": "^2.8.4",
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.9.6",
     "mem": ">=4.0.0",
     "cryptiles": ">=4.1.2"
